@@ -8,12 +8,6 @@ import javax.validation.ConstraintValidatorContext;
 import java.util.Objects;
 
 public class TaskRequestValidator implements ConstraintValidator<TaskRequestConstraint, TaskRequest> {
-
-    @Override
-    public void initialize(TaskRequestConstraint constraintAnnotation) {
-
-    }
-
     @Override
     public boolean isValid(TaskRequest taskRequest, ConstraintValidatorContext context) {
         if (Objects.isNull(taskRequest)) {

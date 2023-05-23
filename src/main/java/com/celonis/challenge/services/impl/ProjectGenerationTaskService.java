@@ -1,10 +1,10 @@
 package com.celonis.challenge.services.impl;
 
-import com.celonis.challenge.exceptions.NotFoundException;
 import com.celonis.challenge.model.ProjectGenerationTask;
 import com.celonis.challenge.repository.ProjectGenerationTaskRepository;
 import com.celonis.challenge.services.TaskService;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -46,6 +46,6 @@ abstract class ProjectGenerationTaskService implements TaskService {
 
     protected ProjectGenerationTask get(String taskId) {
         Optional<ProjectGenerationTask> projectGenerationTask = projectGenerationTaskRepository.findById(taskId);
-        return projectGenerationTask.orElseThrow(NotFoundException::new);
+        return projectGenerationTask.orElseThrow(EntityNotFoundException::new);
     }
 }

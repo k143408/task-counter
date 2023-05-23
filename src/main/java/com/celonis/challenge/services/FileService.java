@@ -12,13 +12,16 @@ import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 @Service
 public class FileService {
-    public ResponseEntity<FileSystemResource> getTaskResult(ProjectGenerationTask projectGenerationTask) {
-        File inputFile = new File(projectGenerationTask.getStorageLocation());
 
-        if (!inputFile.exists()) {
+    public ResponseEntity<FileSystemResource> getTaskResult(ProjectGenerationTask projectGenerationTask) {
+        Path inputFile = Path.of(projectGenerationTask.getStorageLocation());
+
+        if (!Files.exists(inputFile)) {
             throw new InternalException("File not generated yet");
         }
 
