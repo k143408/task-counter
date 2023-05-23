@@ -3,12 +3,13 @@ package com.celonis.challenge.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Date;
 
 @Entity
+@Inheritance(
+        strategy = InheritanceType.JOINED
+)
 public class ProjectGenerationTask {
 
     @Id

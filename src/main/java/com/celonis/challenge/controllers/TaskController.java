@@ -2,6 +2,8 @@ package com.celonis.challenge.controllers;
 
 import com.celonis.challenge.facade.TaskFacade;
 import com.celonis.challenge.model.ProjectGenerationTask;
+import com.celonis.challenge.request.TaskRequest;
+import com.celonis.challenge.response.TaskProgressResponse;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,8 +31,8 @@ public class TaskController {
     }
 
     @PostMapping
-    public ProjectGenerationTask createTask(@RequestBody @Valid ProjectGenerationTask projectGenerationTask) {
-        return taskFacade.createTask(projectGenerationTask);
+    public ProjectGenerationTask createTask(@RequestBody @Valid TaskRequest taskRequest) {
+        return taskFacade.createTask(taskRequest);
     }
 
     @GetMapping("{taskId}")
@@ -40,8 +42,8 @@ public class TaskController {
 
     @PutMapping("{taskId}")
     public ProjectGenerationTask updateTask(@PathVariable String taskId,
-                                            @RequestBody @Valid ProjectGenerationTask projectGenerationTask) {
-        return taskFacade.update(taskId, projectGenerationTask);
+                                            @RequestBody @Valid TaskRequest taskRequest) {
+        return taskFacade.update(taskId, taskRequest);
     }
 
     @DeleteMapping("{taskId}")
@@ -59,6 +61,18 @@ public class TaskController {
     @GetMapping(value = "{taskId}/result", produces = APPLICATION_OCTET_STREAM_VALUE)
     public ResponseEntity<FileSystemResource> getResult(@PathVariable String taskId) {
         return taskFacade.getTaskResult(taskId);
+    }
+
+    @GetMapping(value = "{taskId}/progress")
+    @ResponseStatus(HttpStatus.OK)
+    public TaskProgressResponse getProgress(@PathVariable String taskId) {
+        return taskFacade.getTaskProgress(taskId);
+    }
+
+    @GetMapping(value = "{taskId}/cancel")
+    @ResponseStatus(HttpStatus.OK)
+    public void getCancel(@PathVariable String taskId) {
+        taskFacade.cancelTask(taskId);
     }
 
 }

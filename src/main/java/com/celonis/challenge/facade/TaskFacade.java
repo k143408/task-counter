@@ -3,8 +3,11 @@ package com.celonis.challenge.facade;
 
 import com.celonis.challenge.exceptions.InternalException;
 import com.celonis.challenge.model.ProjectGenerationTask;
+import com.celonis.challenge.request.TaskRequest;
+import com.celonis.challenge.response.TaskProgressResponse;
 import com.celonis.challenge.services.FileService;
 import com.celonis.challenge.services.TaskService;
+import com.celonis.challenge.util.TaskConvertUtil;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -32,16 +35,18 @@ public class TaskFacade {
         return taskService.listTasks();
     }
 
-    public ProjectGenerationTask createTask(ProjectGenerationTask projectGenerationTask) {
-        return taskService.createTask(projectGenerationTask);
+    public ProjectGenerationTask createTask(TaskRequest taskRequest) {
+        ProjectGenerationTask task = TaskConvertUtil.convert(taskRequest);
+        return taskService.createTask(task);
     }
 
     public ProjectGenerationTask getTask(String taskId) {
         return taskService.getTask(taskId);
     }
 
-    public ProjectGenerationTask update(String taskId, ProjectGenerationTask projectGenerationTask) {
-        return taskService.update(taskId, projectGenerationTask);
+    public ProjectGenerationTask update(String taskId, TaskRequest taskRequest) {
+        ProjectGenerationTask task = TaskConvertUtil.convert(taskRequest);
+        return taskService.update(taskId, task);
     }
 
     public void delete(String taskId) {
@@ -61,5 +66,14 @@ public class TaskFacade {
             throw new InternalException(e);
         }
 
+    }
+
+    public TaskProgressResponse getTaskProgress(String taskId) {
+        Integer taskProgress = taskService.getTaskProgress(taskId);
+        return new TaskProgressResponse(taskProgress);
+    }
+
+    public void cancelTask(String taskId) {
+        taskService.cancelTask(taskId);
     }
 }
