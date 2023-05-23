@@ -19,6 +19,7 @@ public class ProjectGenerationTask {
 
     private String name;
 
+    @Temporal(TemporalType.DATE)
     private Date creationDate;
 
     @JsonIgnore

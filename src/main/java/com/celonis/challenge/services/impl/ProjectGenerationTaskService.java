@@ -42,6 +42,8 @@ abstract class ProjectGenerationTaskService implements TaskService {
         projectGenerationTaskRepository.deleteById(taskId);
     }
 
+
+
     protected ProjectGenerationTask get(String taskId) {
         Optional<ProjectGenerationTask> projectGenerationTask = projectGenerationTaskRepository.findById(taskId);
         return projectGenerationTask.orElseThrow(NotFoundException::new);

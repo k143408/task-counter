@@ -2,6 +2,7 @@ package com.celonis.challenge.services;
 
 import com.celonis.challenge.model.ProjectGenerationTask;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface TaskService {
@@ -19,4 +20,6 @@ public interface TaskService {
     Integer getTaskProgress(String taskId);
 
     void cancelTask(String taskId);
+
+    void deleteUnExecutedTaskOlderThan(LocalDate thresholdDate);
 }

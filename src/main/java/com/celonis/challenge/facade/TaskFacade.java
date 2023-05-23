@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.net.URL;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -75,5 +76,9 @@ public class TaskFacade {
 
     public void cancelTask(String taskId) {
         taskService.cancelTask(taskId);
+    }
+
+    public void deleteUnExecutedTasksOlderThan(LocalDate thresholdDate) {
+        taskService.deleteUnExecutedTaskOlderThan(thresholdDate);
     }
 }
