@@ -44,4 +44,16 @@ public class FileService {
 
         return projectGenerationTask;
     }
+
+    public void removeFile(String taskId)  {
+        Path file = Path.of(String.format("%s.%s",taskId, "zip"));
+
+        if (Files.exists(file)) {
+            try {
+                Files.delete(file);
+            }catch (IOException e) {
+                throw new InternalException(e);
+            }
+        }
+    }
 }
