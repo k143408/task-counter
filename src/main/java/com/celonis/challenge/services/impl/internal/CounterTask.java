@@ -1,4 +1,4 @@
-package com.celonis.challenge.services;
+package com.celonis.challenge.services.impl.internal;
 
 import com.celonis.challenge.model.CounterGenerationTask;
 import com.celonis.challenge.repository.ProjectGenerationTaskRepository;
