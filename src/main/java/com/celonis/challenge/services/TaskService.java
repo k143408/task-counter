@@ -1,12 +1,10 @@
 package com.celonis.challenge.services;
 
-import com.celonis.challenge.exceptions.InternalException;
 import com.celonis.challenge.exceptions.NotFoundException;
 import com.celonis.challenge.model.ProjectGenerationTask;
 import com.celonis.challenge.model.ProjectGenerationTaskRepository;
 import org.springframework.stereotype.Service;
 
-import java.net.URL;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -16,12 +14,8 @@ public class TaskService {
 
     private final ProjectGenerationTaskRepository projectGenerationTaskRepository;
 
-    private final FileService fileService;
-    
-    public TaskService(ProjectGenerationTaskRepository projectGenerationTaskRepository,
-                       FileService fileService) {
+    public TaskService(ProjectGenerationTaskRepository projectGenerationTaskRepository) {
         this.projectGenerationTaskRepository = projectGenerationTaskRepository;
-        this.fileService = fileService;
     }
 
     public List<ProjectGenerationTask> listTasks() {
@@ -40,7 +34,7 @@ public class TaskService {
 
     public ProjectGenerationTask update(String taskId, ProjectGenerationTask projectGenerationTask) {
         ProjectGenerationTask existing = get(taskId);
-        existing.setCreationDate(projectGenerationTask.getCreationDate());
+        existing.setCreationDate(Optional.ofNullable(projectGenerationTask.getCreationDate()).orElseGet(Date::new));
         existing.setName(projectGenerationTask.getName());
         return projectGenerationTaskRepository.save(existing);
     }
@@ -48,19 +42,6 @@ public class TaskService {
     public void delete(String taskId) {
         projectGenerationTaskRepository.deleteById(taskId);
     }
-
-    public void executeTask(String taskId) {
-        URL url = Thread.currentThread().getContextClassLoader().getResource("challenge.zip");
-        if (url == null) {
-            throw new InternalException("Zip file not found");
-        }
-        try {
-            fileService.storeResult(taskId, url);
-        } catch (Exception e) {
-            throw new InternalException(e);
-        }
-    }
-
     private ProjectGenerationTask get(String taskId) {
         Optional<ProjectGenerationTask> projectGenerationTask = projectGenerationTaskRepository.findById(taskId);
         return projectGenerationTask.orElseThrow(NotFoundException::new);

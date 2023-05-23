@@ -1,8 +1,7 @@
 package com.celonis.challenge.controllers;
 
+import com.celonis.challenge.facade.TaskFacade;
 import com.celonis.challenge.model.ProjectGenerationTask;
-import com.celonis.challenge.services.FileService;
-import com.celonis.challenge.services.TaskService;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,56 +10,55 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
+
 @RestController
-@RequestMapping("/api/tasks")
+@RequestMapping(value = "/api/tasks/", produces = APPLICATION_JSON_VALUE)
 public class TaskController {
 
-    private final TaskService taskService;
+    private final TaskFacade taskFacade;
 
-    private final FileService fileService;
-
-    public TaskController(TaskService taskService,
-                          FileService fileService) {
-        this.taskService = taskService;
-        this.fileService = fileService;
+    public TaskController(TaskFacade taskFacade) {
+        this.taskFacade = taskFacade;
     }
 
-    @GetMapping("/")
+    @GetMapping
     public List<ProjectGenerationTask> listTasks() {
-        return taskService.listTasks();
+        return taskFacade.listTasks();
     }
 
-    @PostMapping("/")
+    @PostMapping
     public ProjectGenerationTask createTask(@RequestBody @Valid ProjectGenerationTask projectGenerationTask) {
-        return taskService.createTask(projectGenerationTask);
+        return taskFacade.createTask(projectGenerationTask);
     }
 
-    @GetMapping("/{taskId}")
+    @GetMapping("{taskId}")
     public ProjectGenerationTask getTask(@PathVariable String taskId) {
-        return taskService.getTask(taskId);
+        return taskFacade.getTask(taskId);
     }
 
-    @PutMapping("/{taskId}")
+    @PutMapping("{taskId}")
     public ProjectGenerationTask updateTask(@PathVariable String taskId,
                                             @RequestBody @Valid ProjectGenerationTask projectGenerationTask) {
-        return taskService.update(taskId, projectGenerationTask);
+        return taskFacade.update(taskId, projectGenerationTask);
     }
 
-    @DeleteMapping("/{taskId}")
+    @DeleteMapping("{taskId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteTask(@PathVariable String taskId) {
-        taskService.delete(taskId);
+        taskFacade.delete(taskId);
     }
 
-    @PostMapping("/{taskId}/execute")
+    @PostMapping("{taskId}/execute")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void executeTask(@PathVariable String taskId) {
-        taskService.executeTask(taskId);
+        taskFacade.executeTask(taskId);
     }
 
-    @GetMapping("/{taskId}/result")
+    @GetMapping(value = "{taskId}/result", produces = APPLICATION_OCTET_STREAM_VALUE)
     public ResponseEntity<FileSystemResource> getResult(@PathVariable String taskId) {
-        return fileService.getTaskResult(taskId);
+        return taskFacade.getTaskResult(taskId);
     }
 
 }
