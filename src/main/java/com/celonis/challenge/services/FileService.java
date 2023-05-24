@@ -4,6 +4,7 @@ import com.celonis.challenge.exceptions.InternalException;
 import com.celonis.challenge.model.ProjectGenerationTask;
 import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -11,14 +12,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
 
 @Service
 public class FileService {
 
     public ResponseEntity<FileSystemResource> getTaskResult(ProjectGenerationTask projectGenerationTask) {
+        if (Objects.isNull(projectGenerationTask.getStorageLocation())) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
         Path inputFile = Path.of(projectGenerationTask.getStorageLocation());
 
         if (!Files.exists(inputFile)) {
@@ -32,28 +36,11 @@ public class FileService {
         return new ResponseEntity<>(new FileSystemResource(inputFile), respHeaders, HttpStatus.OK);
     }
 
-    public ProjectGenerationTask storeResult(ProjectGenerationTask projectGenerationTask, URL url) throws IOException {
+    public ProjectGenerationTask storeResult(ProjectGenerationTask projectGenerationTask, Resource resource) throws IOException {
         File outputFile = File.createTempFile(projectGenerationTask.getId(), ".zip");
         outputFile.deleteOnExit();
         projectGenerationTask.setStorageLocation(outputFile.getAbsolutePath());
-
-        try (InputStream is = url.openStream();
-             OutputStream os = new FileOutputStream(outputFile)) {
-            IOUtils.copy(is, os);
-        }
-
+        IOUtils.copy(resource.getInputStream(), new FileOutputStream(outputFile));
         return projectGenerationTask;
-    }
-
-    public void removeFile(String taskId)  {
-        Path file = Path.of(String.format("%s.%s",taskId, "zip"));
-
-        if (Files.exists(file)) {
-            try {
-                Files.delete(file);
-            }catch (IOException e) {
-                throw new InternalException(e);
-            }
-        }
     }
 }

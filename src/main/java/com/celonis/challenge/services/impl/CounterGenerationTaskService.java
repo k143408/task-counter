@@ -5,6 +5,7 @@ import com.celonis.challenge.model.ProjectGenerationTask;
 import com.celonis.challenge.repository.ProjectGenerationTaskRepository;
 import com.celonis.challenge.services.impl.internal.CounterTask;
 import com.celonis.challenge.services.TaskService;
+import com.celonis.challenge.services.impl.internal.CounterTaskWithFutureReference;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +14,7 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
 
@@ -20,22 +22,13 @@ import java.util.concurrent.Future;
 public class CounterGenerationTaskService extends ProjectGenerationTaskService implements TaskService {
 
     private final ThreadPoolTaskExecutor taskExecutor;
-    private final Map<String, Future<?>> runningTasks;
+    private final Map<String, CounterTaskWithFutureReference> runningTasks;
 
 
     public CounterGenerationTaskService(ProjectGenerationTaskRepository projectGenerationTaskRepository, ThreadPoolTaskExecutor taskExecutor) {
         super(projectGenerationTaskRepository);
         this.taskExecutor = taskExecutor;
         this.runningTasks = new ConcurrentHashMap<>();
-    }
-
-    @Override
-    public ProjectGenerationTask createTask(ProjectGenerationTask projectGenerationTask) {
-        ProjectGenerationTask task = super.createTask(projectGenerationTask);
-        if (task instanceof CounterGenerationTask) {
-            executeCounterTask((CounterGenerationTask) task);
-        }
-        return task;
     }
 
     @Override
@@ -55,28 +48,37 @@ public class CounterGenerationTaskService extends ProjectGenerationTaskService i
     }
 
     @Override
+    public void executeTask(ProjectGenerationTask task) {
+        if (task instanceof CounterGenerationTask){
+            executeCounterTask((CounterGenerationTask) task);
+        }
+    }
+
+    @Override
     public Integer getTaskProgress(String taskId) {
         ProjectGenerationTask task = get(taskId);
         if (task instanceof CounterGenerationTask) {
-            CounterGenerationTask counterTask = (CounterGenerationTask) task;
-            return counterTask.getProgress();
+            CounterTaskWithFutureReference counterTaskWithFutureReference = runningTasks.get(taskId);
+            if (Objects.nonNull(counterTaskWithFutureReference)){
+                return counterTaskWithFutureReference.getTask().getProgress();
+            }
         }
         throw new UnsupportedOperationException("Does not support");
     }
 
     @Override
     public void cancelTask(String taskId) {
-        Future<?> taskFuture = runningTasks.get(taskId);
+        CounterTaskWithFutureReference taskFuture = runningTasks.get(taskId);
         if (taskFuture != null) {
-            taskFuture.cancel(true);
+            taskFuture.getFuture().cancel(true);
             runningTasks.remove(taskId);
         }
     }
 
     private void executeCounterTask(CounterGenerationTask task) {
-        CounterTask taskCounter = new CounterTask(task, projectGenerationTaskRepository);
+        CounterTask taskCounter = new CounterTask(task);
         Future<?> taskFuture = taskExecutor.submit(taskCounter);
-        runningTasks.put(task.getId(), taskFuture);
+        runningTasks.put(task.getId(), new CounterTaskWithFutureReference(taskCounter,taskFuture));
     }
 
 }

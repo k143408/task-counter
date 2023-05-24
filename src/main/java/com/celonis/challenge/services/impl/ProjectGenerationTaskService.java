@@ -17,27 +17,33 @@ abstract class ProjectGenerationTaskService implements TaskService {
         this.projectGenerationTaskRepository = projectGenerationTaskRepository;
     }
 
+    @Override
     public List<ProjectGenerationTask> listTasks() {
         return projectGenerationTaskRepository.findAll();
     }
 
+    @Override
     public ProjectGenerationTask createTask(ProjectGenerationTask projectGenerationTask) {
         projectGenerationTask.setId(null);
         projectGenerationTask.setCreationDate(new Date());
         return projectGenerationTaskRepository.save(projectGenerationTask);
     }
 
+    @Override
     public ProjectGenerationTask getTask(String taskId) {
         return get(taskId);
     }
 
+    @Override
     public ProjectGenerationTask update(String taskId, ProjectGenerationTask projectGenerationTask) {
         ProjectGenerationTask existing = get(taskId);
         existing.setCreationDate(Optional.ofNullable(projectGenerationTask.getCreationDate()).orElseGet(Date::new));
         existing.setName(projectGenerationTask.getName());
+        existing.setStorageLocation(projectGenerationTask.getStorageLocation());
         return projectGenerationTaskRepository.save(existing);
     }
 
+    @Override
     public void delete(String taskId) {
         projectGenerationTaskRepository.deleteById(taskId);
     }

@@ -22,4 +22,6 @@ public interface TaskService {
     void cancelTask(String taskId);
 
     void deleteUnExecutedTaskOlderThan(LocalDate thresholdDate);
+
+    void executeTask(ProjectGenerationTask task);
 }

@@ -8,11 +8,12 @@ import com.celonis.challenge.response.TaskProgressResponse;
 import com.celonis.challenge.services.FileService;
 import com.celonis.challenge.services.TaskService;
 import com.celonis.challenge.util.TaskConvertUtil;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.net.URL;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -21,10 +22,13 @@ public class TaskFacade {
 
     private final TaskService taskService;
     private final FileService fileService;
+    private final Resource resource;
 
-    public TaskFacade(TaskService taskService, FileService fileService) {
+    public TaskFacade(TaskService taskService, FileService fileService,
+                      @Value("classpath:challenge.zip") Resource resource) {
         this.taskService = taskService;
         this.fileService = fileService;
+        this.resource = resource;
     }
 
     public ResponseEntity<FileSystemResource> getTaskResult(String taskId) {
@@ -56,13 +60,10 @@ public class TaskFacade {
 
     public void executeTask(String taskId) {
         ProjectGenerationTask task = taskService.getTask(taskId);
-        URL url = Thread.currentThread().getContextClassLoader().getResource("challenge.zip");
-        if (url == null) {
-            throw new InternalException("Zip file not found");
-        }
         try {
-            ProjectGenerationTask updateProjectGenerationTask = fileService.storeResult(task, url);
-            taskService.update(taskId, updateProjectGenerationTask);
+            task = fileService.storeResult(task, resource);
+            task = taskService.update(taskId, task);
+            taskService.executeTask(task);
         } catch (Exception e) {
             throw new InternalException(e);
         }
