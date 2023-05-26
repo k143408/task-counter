@@ -1,68 +1,62 @@
-# Celonis Programming Challenge
+# Celonis Programming Challenge - Java Application
 
-Dear applicant,
+This repository contains the solution for the Celonis Programming Challenge, which involves fixing and extending a Java application. The application is built using JDK 11, Spring Boot 2, and Maven.
 
-Congratulations, you made it to the Celonis Programming Challenge!
+## Task 1: Dependency Injection
 
-Note that, although you are welcome to spend as long as you feel appropriate on your solution, this assignment usually takes a minimum of 3 hours.
+The project initially fails to start due to a problem with dependency injection. This issue has been identified and fixed, allowing the application to start correctly.
 
-We will be happy to discuss any problems and ideas during the Challenge Interview.
+## Task 2: Extend the Application
 
-Why do we ask you to complete this challenge?
+The application has been extended to include a new task type, task progress monitoring, and task cancellation mechanism.
 
-First of all, we need to have some way of comparing different applicants, and we try to answer certain questions which
-we cannot out-right ask in an interview - also we don't want to ask too many technical questions
-in a face-to-face interview to not be personally biased in a potentially stressful situation.
-To be as transparent as possible, we want to give you some insights into what we look at and how we evaluate.
-This challenge gives you the possibility to shine :)
+### New Task Type: Counter
 
-Note that there is nothing wrong with googling when you have certain questions or are unsure about some APIs,
-but you should not outright copy code. If you decide to copy code, please mark it as such, citing the source.
+A new task type, called "Counter," has been implemented. It takes two input parameters, `x` and `y`, both of type `integer`. When the task is executed, a counter starts in the background and progresses by one every second. The counting starts from `x` and continues until it reaches `y`, at which point the task is considered successfully finished.
 
-## Complete and extend a java application
+### Task Progress Monitoring
 
-For this challenge, you have received a project which has a few problems.
-You first have to fix those problems in order to get the application running, and then you should extend it with the requirements below.
+The progress of the task execution is now exposed via the API. This allows web clients to monitor the progress of a running task. The API endpoints provide real-time information about the current count and the total count of the task.
 
-What we are looking into:
-  - Understanding and implementation of a specification
-  - Java implementation skills (Java 11, Spring Boot)
-  - Multithreading / locking execution
-  - **Note**: performance and scalability are important, please apply reasonable balance between solution performance and invested time
+### Task Cancellation
 
-      We expect to do some demo during the next technical interview,
-      so please ensure the API works and prepare some mocks
-      (Postman, curl or any preferred HTTP/REST tools)
+A task cancellation mechanism has been implemented, allowing users to cancel a task that is currently being executed. When a task is canceled, the execution stops, and the task is marked as canceled.
 
-How to understand the task:
-  - consider the provided challenge as an application with some existing functionality,
-    which was used to "generate" a file and download it
-  - fix current issues to make the application runnable
-  - keep existing behavior and API. Refactorings are allowed and welcome
-  - extend and generalize the supplied sources according to the description below
+## Task 3: Periodic Task Cleanup
 
+The API allows users to create tasks, but they are not required to execute those tasks. To prevent clutter and unnecessary data, tasks that have not been executed for an extended period, such as a week, are periodically cleaned up (deleted).
 
-### Task 1: Dependency injection
+## Running the Application
 
-The project you received fails to start correctly due to a problem in the dependency injection.
-Identify that problem and fix it.
+To run the application, follow the steps below:
 
-### Task 2: Extend the application
+1. Ensure that JDK 11 is installed on your system.
 
-The task is to extend the current functionality of the backend by
-- implementing a new task type
-- showing the progress of the task execution
-- implementing a task cancellation mechanism.
+2. Clone this repository to your local machine.
 
-The new task type is a simple counter which is configured with two input parameters, `x` and `y` of type `integer`.
-When the task is executed, counter should start in the background and progress should be monitored.
-Counting should start from `x` and get increased by one every second.
-When counting reaches `y`, the task should finish successfully.
+3. Open the project in your preferred Java IDE (e.g., IntelliJ or Eclipse).
 
-The progress of the task should be exposed via the API so that a web client can monitor it.
-Canceling a task that is being executed should be possible, in which case the execution should stop.
+4. Build the project using Maven to download the dependencies:
 
-### Task 3: Periodically clean up the tasks
+   ```shell
+   mvn clean install
+   ```
 
-The API can be used to create tasks, but the user is not required to execute those tasks.
-The tasks that are not executed after an extended period (e.g. a week) should be periodically cleaned up (deleted).
+5. Run the main class of the Spring Boot application, which is annotated with `@SpringBootApplication` and contains a `main` method.
+
+6. The Spring Boot service will start running, and you will see log messages indicating that the application has started successfully.
+
+7. Once the application is running, you can test the API using tools like Postman or cURL. The API endpoints should be accessible at `http://localhost:8080` or a different port if configured differently.
+
+## Running Test Cases
+
+The project includes test cases implemented using JUnit 5. To run the test cases, follow these steps:
+
+   ```shell
+   mvn clean test
+   ```
+Ensure that all the test cases pass successfully to verify the correctness of the implementation.
+
+## Conclusion
+
+Feel free to reach out if you have any questions or need further assistance.

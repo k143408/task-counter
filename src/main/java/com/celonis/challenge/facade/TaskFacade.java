@@ -1,7 +1,6 @@
 package com.celonis.challenge.facade;
 
 
-import com.celonis.challenge.exceptions.InternalException;
 import com.celonis.challenge.model.ProjectGenerationTask;
 import com.celonis.challenge.request.TaskRequest;
 import com.celonis.challenge.response.TaskProgressResponse;
@@ -11,7 +10,6 @@ import com.celonis.challenge.util.TaskConvertUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -31,7 +29,7 @@ public class TaskFacade {
         this.resource = resource;
     }
 
-    public ResponseEntity<FileSystemResource> getTaskResult(String taskId) {
+    public FileSystemResource getTaskResult(String taskId) {
         ProjectGenerationTask projectGenerationTask = taskService.getTask(taskId);
         return fileService.getTaskResult(projectGenerationTask);
     }
@@ -60,14 +58,9 @@ public class TaskFacade {
 
     public void executeTask(String taskId) {
         ProjectGenerationTask task = taskService.getTask(taskId);
-        try {
-            task = fileService.storeResult(task, resource);
-            task = taskService.update(taskId, task);
-            taskService.executeTask(task);
-        } catch (Exception e) {
-            throw new InternalException(e);
-        }
-
+        task = fileService.storeResult(task, resource);
+        task = taskService.update(taskId, task);
+        taskService.executeTask(task);
     }
 
     public TaskProgressResponse getTaskProgress(String taskId) {

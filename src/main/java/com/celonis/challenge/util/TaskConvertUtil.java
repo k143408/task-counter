@@ -5,12 +5,14 @@ import com.celonis.challenge.model.ProjectGenerationTask;
 import com.celonis.challenge.request.TaskRequest;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
+
 @Component
 public class TaskConvertUtil {
     private TaskConvertUtil() {}
 
     public static ProjectGenerationTask convert(TaskRequest tr) {
-        if (tr.getX() != null) {
+        if (Objects.nonNull(tr.getX())) {
             CounterGenerationTask cg = new CounterGenerationTask();
             cg.setName(tr.getName());
             cg.setX(tr.getX());

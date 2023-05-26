@@ -1,5 +1,6 @@
 package com.celonis.challenge.controllers;
 
+import com.celonis.challenge.exceptions.FilePathNotFoundException;
 import com.celonis.challenge.exceptions.NotAuthorizedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +26,13 @@ public class ErrorController {
     public String handleNotFound(EntityNotFoundException e) {
         logger.error("Entity not found : {}", e.getMessage());
         return "Not found";
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(FilePathNotFoundException.class)
+    public String handleNotFound(FilePathNotFoundException e) {
+        logger.error("{}", e.getMessage());
+        return e.getMessage();
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)

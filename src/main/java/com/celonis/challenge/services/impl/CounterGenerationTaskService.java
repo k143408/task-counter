@@ -3,8 +3,8 @@ package com.celonis.challenge.services.impl;
 import com.celonis.challenge.model.CounterGenerationTask;
 import com.celonis.challenge.model.ProjectGenerationTask;
 import com.celonis.challenge.repository.ProjectGenerationTaskRepository;
-import com.celonis.challenge.services.impl.internal.CounterTask;
 import com.celonis.challenge.services.TaskService;
+import com.celonis.challenge.services.impl.internal.CounterTask;
 import com.celonis.challenge.services.impl.internal.CounterTaskWithFutureReference;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
@@ -24,7 +24,6 @@ public class CounterGenerationTaskService extends ProjectGenerationTaskService i
     private final ThreadPoolTaskExecutor taskExecutor;
     private final Map<String, CounterTaskWithFutureReference> runningTasks;
 
-
     public CounterGenerationTaskService(ProjectGenerationTaskRepository projectGenerationTaskRepository, ThreadPoolTaskExecutor taskExecutor) {
         super(projectGenerationTaskRepository);
         this.taskExecutor = taskExecutor;
@@ -34,6 +33,7 @@ public class CounterGenerationTaskService extends ProjectGenerationTaskService i
     @Override
     public void delete(String taskId) {
         cancelTask(taskId);
+        runningTasks.remove(taskId);
         super.delete(taskId);
     }
 
@@ -42,7 +42,7 @@ public class CounterGenerationTaskService extends ProjectGenerationTaskService i
         Date threshold = Date.from(thresholdDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
         List<ProjectGenerationTask> unExecutedTasks = projectGenerationTaskRepository.deleteUnExecutedTasksOlderThan(threshold);
 
-        unExecutedTasks.stream().filter(t-> t instanceof CounterGenerationTask)
+        unExecutedTasks.stream()
                 .map(ProjectGenerationTask::getId)
                 .forEach(this::delete);
     }
@@ -71,14 +71,13 @@ public class CounterGenerationTaskService extends ProjectGenerationTaskService i
         CounterTaskWithFutureReference taskFuture = runningTasks.get(taskId);
         if (taskFuture != null) {
             taskFuture.getFuture().cancel(true);
-            runningTasks.remove(taskId);
         }
+
     }
 
-    private void executeCounterTask(CounterGenerationTask task) {
+    protected void executeCounterTask(CounterGenerationTask task) {
         CounterTask taskCounter = new CounterTask(task);
         Future<?> taskFuture = taskExecutor.submit(taskCounter);
-        runningTasks.put(task.getId(), new CounterTaskWithFutureReference(taskCounter,taskFuture));
+        runningTasks.put(task.getId(), new CounterTaskWithFutureReference(taskCounter, taskFuture));
     }
-
 }

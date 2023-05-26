@@ -32,4 +32,13 @@ public class TaskRequest {
     public void setY(Integer y) {
         this.y = y;
     }
+
+    @Override
+    public String toString() {
+        return "TaskRequest{" +
+                "name='" + name + '\'' +
+                ", x=" + x +
+                ", y=" + y +
+                '}';
+    }
 }

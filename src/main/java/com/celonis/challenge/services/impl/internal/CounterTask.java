@@ -2,6 +2,7 @@ package com.celonis.challenge.services.impl.internal;
 
 import com.celonis.challenge.model.CounterGenerationTask;
 
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -9,6 +10,9 @@ public class CounterTask implements Runnable {
     private final AtomicReference<CounterGenerationTask> task;
 
     public CounterTask(CounterGenerationTask task) {
+        if (Objects.isNull(task)){
+            throw new IllegalArgumentException("Task cannot be null");
+        }
         this.task = new AtomicReference<>(task);
     }
 

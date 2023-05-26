@@ -3,6 +3,7 @@ package com.celonis.challenge.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.Entity;
+import javax.persistence.Transient;
 
 
 @Entity
@@ -12,8 +13,8 @@ public class CounterGenerationTask extends ProjectGenerationTask {
     private Integer y;
 
     @JsonIgnore
+    @Transient
     private Integer progress;
-
 
     public Integer getX() {
         return x;

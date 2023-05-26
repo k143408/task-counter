@@ -10,15 +10,15 @@ import java.time.LocalDate;
 @Service
 public class TaskCleanupScheduler {
     private final TaskFacade taskFacade;
-    private final Long week;
-    public TaskCleanupScheduler(TaskFacade taskFacade, @Value("${cleanup.week}") Long week) {
+    private final Long days;
+    public TaskCleanupScheduler(TaskFacade taskFacade, @Value("${cleanup.days}") Long days) {
         this.taskFacade = taskFacade;
-        this.week = week;
+        this.days = days;
     }
 
     @Scheduled(cron = "${scheduler.clean_up.cron}" )
     public void cleanupTasks() {
-        LocalDate thresholdDate = LocalDate.now().minusWeeks(week);
+        LocalDate thresholdDate = LocalDate.now().minusDays(days);
         taskFacade.deleteUnExecutedTasksOlderThan(thresholdDate);
     }
 }

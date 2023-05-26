@@ -5,7 +5,9 @@ import com.celonis.challenge.model.ProjectGenerationTask;
 import com.celonis.challenge.request.TaskRequest;
 import com.celonis.challenge.response.TaskProgressResponse;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,6 +33,7 @@ public class TaskController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public ProjectGenerationTask createTask(@RequestBody @Valid TaskRequest taskRequest) {
         return taskFacade.createTask(taskRequest);
     }
@@ -53,14 +56,20 @@ public class TaskController {
     }
 
     @PostMapping("{taskId}/execute")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.ACCEPTED)
     public void executeTask(@PathVariable String taskId) {
         taskFacade.executeTask(taskId);
     }
 
     @GetMapping(value = "{taskId}/result", produces = APPLICATION_OCTET_STREAM_VALUE)
     public ResponseEntity<FileSystemResource> getResult(@PathVariable String taskId) {
-        return taskFacade.getTaskResult(taskId);
+        FileSystemResource taskResult = taskFacade.getTaskResult(taskId);
+
+        HttpHeaders respHeaders = new HttpHeaders();
+        respHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        respHeaders.setContentDispositionFormData("attachment", "challenge.zip");
+
+        return new ResponseEntity<>(taskResult, respHeaders, HttpStatus.OK);
     }
 
     @GetMapping(value = "{taskId}/progress")

@@ -49,7 +49,6 @@ abstract class ProjectGenerationTaskService implements TaskService {
     }
 
 
-
     protected ProjectGenerationTask get(String taskId) {
         Optional<ProjectGenerationTask> projectGenerationTask = projectGenerationTaskRepository.findById(taskId);
         return projectGenerationTask.orElseThrow(EntityNotFoundException::new);
