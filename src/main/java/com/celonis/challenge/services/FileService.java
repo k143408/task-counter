@@ -14,6 +14,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @Service
 public class FileService {
@@ -37,6 +38,14 @@ public class FileService {
             projectGenerationTask.setStorageLocation(outputFile.getAbsolutePath());
             IOUtils.copy(resource.getInputStream(), new FileOutputStream(outputFile));
             return projectGenerationTask;
+        } catch (IOException e) {
+            throw new InternalException(e.getMessage());
+        }
+    }
+
+    public void delete(String filePath) {
+        try {
+            Files.delete(Paths.get(filePath));
         } catch (IOException e) {
             throw new InternalException(e.getMessage());
         }

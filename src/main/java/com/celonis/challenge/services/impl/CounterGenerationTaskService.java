@@ -12,11 +12,9 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Future;
 
 @Service
 public class CounterGenerationTaskService extends ProjectGenerationTaskService implements TaskService {
@@ -39,8 +37,8 @@ public class CounterGenerationTaskService extends ProjectGenerationTaskService i
 
     @Override
     public void deleteUnExecutedTaskOlderThan(LocalDate thresholdDate) {
-        Date threshold = Date.from(thresholdDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-        List<ProjectGenerationTask> unExecutedTasks = projectGenerationTaskRepository.deleteUnExecutedTasksOlderThan(threshold);
+        var threshold = Date.from(thresholdDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        var unExecutedTasks = projectGenerationTaskRepository.deleteUnExecutedTasksOlderThan(threshold);
 
         unExecutedTasks.stream()
                 .map(ProjectGenerationTask::getId)
@@ -56,7 +54,7 @@ public class CounterGenerationTaskService extends ProjectGenerationTaskService i
 
     @Override
     public Integer getTaskProgress(String taskId) {
-        ProjectGenerationTask task = get(taskId);
+        var task = get(taskId);
         if (task instanceof CounterGenerationTask) {
             CounterTaskWithFutureReference counterTaskWithFutureReference = runningTasks.get(taskId);
             if (Objects.nonNull(counterTaskWithFutureReference)){
@@ -68,7 +66,7 @@ public class CounterGenerationTaskService extends ProjectGenerationTaskService i
 
     @Override
     public void cancelTask(String taskId) {
-        CounterTaskWithFutureReference taskFuture = runningTasks.get(taskId);
+        var taskFuture = runningTasks.get(taskId);
         if (taskFuture != null) {
             taskFuture.getFuture().cancel(true);
         }
@@ -76,8 +74,8 @@ public class CounterGenerationTaskService extends ProjectGenerationTaskService i
     }
 
     protected void executeCounterTask(CounterGenerationTask task) {
-        CounterTask taskCounter = new CounterTask(task);
-        Future<?> taskFuture = taskExecutor.submit(taskCounter);
+        var taskCounter = new CounterTask(task);
+        var taskFuture = taskExecutor.submit(taskCounter);
         runningTasks.put(task.getId(), new CounterTaskWithFutureReference(taskCounter, taskFuture));
     }
 }

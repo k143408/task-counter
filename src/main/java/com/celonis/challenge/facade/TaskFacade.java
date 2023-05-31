@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -30,7 +31,7 @@ public class TaskFacade {
     }
 
     public FileSystemResource getTaskResult(String taskId) {
-        ProjectGenerationTask projectGenerationTask = taskService.getTask(taskId);
+        var projectGenerationTask = taskService.getTask(taskId);
         return fileService.getTaskResult(projectGenerationTask);
     }
 
@@ -39,7 +40,7 @@ public class TaskFacade {
     }
 
     public ProjectGenerationTask createTask(TaskRequest taskRequest) {
-        ProjectGenerationTask task = TaskConvertUtil.convert(taskRequest);
+        var task = TaskConvertUtil.convert(taskRequest);
         return taskService.createTask(task);
     }
 
@@ -48,23 +49,27 @@ public class TaskFacade {
     }
 
     public ProjectGenerationTask update(String taskId, TaskRequest taskRequest) {
-        ProjectGenerationTask task = TaskConvertUtil.convert(taskRequest);
+        var task = TaskConvertUtil.convert(taskRequest);
         return taskService.update(taskId, task);
     }
 
     public void delete(String taskId) {
-        taskService.delete(taskId);
+        var task = getTask(taskId);
+        taskService.delete(task.getId());
+        if (!StringUtils.isEmpty(task.getStorageLocation())) {
+            fileService.delete(task.getStorageLocation());
+        }
     }
 
     public void executeTask(String taskId) {
-        ProjectGenerationTask task = taskService.getTask(taskId);
+        var task = taskService.getTask(taskId);
         task = fileService.storeResult(task, resource);
         task = taskService.update(taskId, task);
         taskService.executeTask(task);
     }
 
     public TaskProgressResponse getTaskProgress(String taskId) {
-        Integer taskProgress = taskService.getTaskProgress(taskId);
+        var taskProgress = taskService.getTaskProgress(taskId);
         return new TaskProgressResponse(taskProgress);
     }
 
