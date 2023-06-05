@@ -1,12 +1,12 @@
-# Celonis Programming Challenge - Java Application
+# Task Programming Challenge - Java Application
 
-This repository contains the solution for the Celonis Programming Challenge, which involves fixing and extending a Java application. The application is built using JDK 11, Spring Boot 2, and Maven.
+This repository contains the solution for the Task Programming Challenge, which involves fixing and extending a Java application. The application is built using JDK 11, Spring Boot 2, and Maven.
 
 ## Task 1: Dependency Injection
 
 The project initially fails to start due to a problem with dependency injection. This issue has been identified and fixed, allowing the application to start correctly.
 
-## Task 2: Extend the Application
+## Task 2: Extend the Application   
 
 The application has been extended to include a new task type, task progress monitoring, and task cancellation mechanism.
 
