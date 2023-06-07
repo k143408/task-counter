@@ -30,7 +30,7 @@ The API allows users to create tasks, but they are not required to execute those
 
 To run the application, follow the steps below:
 
-1. Ensure that JDK 11 is installed on your system.
+1. Ensure that JDK 17 is installed on your system.
 
 2. Clone this repository to your local machine.
 
