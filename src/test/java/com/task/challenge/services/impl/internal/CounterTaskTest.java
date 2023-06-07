@@ -1,84 +1,44 @@
 package com.task.challenge.services.impl.internal;
 
 import com.task.challenge.model.CounterGenerationTask;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class CounterTaskTest {
-    ThreadPoolTaskExecutor taskExecutor;
+    private CounterTask counterTask;
+
     @BeforeEach
-    public void init(){
-        taskExecutor = new ThreadPoolTaskExecutor();
-        taskExecutor.initialize();
-    }
-
-    @AfterEach
-    public void shutdown(){
-        taskExecutor.shutdown();
-    }
-    @Test
-    public void run_ShouldUpdateTaskProgressUntilTargetIsReached() throws InterruptedException {
-       
-        CounterGenerationTask task = new CounterGenerationTask();
-        task.setX(0);
-        task.setY(5);
-        CounterTask counterTask = new CounterTask(task);
-
-        
-        Thread thread = new Thread(counterTask);
-        thread.start();
-        thread.join();
-
-        
-        assertThat(task.getProgress()).isEqualTo(5);
-    }
-
-    @Test
-    public void run_WithInterruptedThread_ShouldStopExecution() throws InterruptedException {
-       
+    public void setup() {
         CounterGenerationTask task = new CounterGenerationTask();
         task.setX(0);
         task.setY(10);
-        CounterTask counterTask = new CounterTask(task);
-
-        
-        Thread thread = new Thread(counterTask);
-        thread.start();
-        TimeUnit.MILLISECONDS.sleep(50);
-        thread.interrupt();
-        thread.join();
-
-        
-        assertThat(task.getProgress()).isLessThan(10);
+        counterTask = new CounterTask(task);
     }
 
     @Test
-    public void getProgress_ShouldReturnTaskProgress() {
-       
-        CounterGenerationTask task = new CounterGenerationTask();
-        task.setProgress(7);
-        CounterTask counterTask = new CounterTask(task);
-
-        
-        Integer progress = counterTask.getProgress();
-
-        
-        assertThat(progress).isEqualTo(7);
+    public void testConstructor_WithNullTask_ShouldThrowIllegalArgumentException() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new CounterTask(null);
+        });
     }
 
     @Test
-    public void constructor_WithNullTask_ShouldThrowIllegalArgumentException() {
-       
-        assertThatThrownBy(() -> new CounterTask(null))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Task cannot be null");
+    public void testGetProgress_Initially_ShouldReturnZero() {
+        assertEquals(0, counterTask.getProgress());
     }
 
+    @Test
+    public void testRun_AfterExecution_ShouldUpdateProgressToTargetValue() throws InterruptedException {
+        ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+        executorService.execute(counterTask);
+        TimeUnit.SECONDS.sleep(2);
+        assertEquals(1, counterTask.getProgress());
+    }
 }

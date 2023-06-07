@@ -1,6 +1,6 @@
 # Task Programming Challenge - Java Application
 
-This repository contains the solution for the Task Programming Challenge, which involves fixing and extending a Java application. The application is built using JDK 11, Spring Boot 2, and Maven.
+This repository contains the solution for the Task Programming Challenge, which involves fixing and extending a Java application. The application is built using JDK 17, Spring Boot 2, and Maven.
 
 ## Task 1: Dependency Injection
 

@@ -1,0 +1,205 @@
+{
+	"info": {
+		"_postman_id": "c780a80a-1be2-4949-bcc4-53ca9cfbd35f",
+		"name": "Task Challenge",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "GET Tasks List",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{URL}}",
+					"host": [
+						"{{URL}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Post Task",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Set taskId \", () => {",
+							"    //parse the response JSON and test three properties",
+							"    const responseJson = pm.response.json();",
+							"",
+							"    pm.environment.set(\"taskId\", responseJson.id);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\" : \"task2\",\n    \"x\" : 0, \n    \"y\" : 50\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL}}",
+					"host": [
+						"{{URL}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Modify Task",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\" : \"task3\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL}}{{taskId}}",
+					"host": [
+						"{{URL}}{{taskId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Task",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{URL}}{{taskId}}",
+					"host": [
+						"{{URL}}{{taskId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Execute Task",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{URL}}{{taskId}}?action=execute",
+					"host": [
+						"{{URL}}{{taskId}}"
+					],
+					"query": [
+						{
+							"key": "action",
+							"value": "execute"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Result Task",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{URL}}{{taskId}}?action=result",
+					"host": [
+						"{{URL}}{{taskId}}"
+					],
+					"query": [
+						{
+							"key": "action",
+							"value": "result"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Task Progress",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{URL}}{{taskId}}?action=progress",
+					"host": [
+						"{{URL}}{{taskId}}"
+					],
+					"query": [
+						{
+							"key": "action",
+							"value": "progress"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cancel Task",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{URL}}{{taskId}}?action=progress",
+					"host": [
+						"{{URL}}{{taskId}}"
+					],
+					"query": [
+						{
+							"key": "action",
+							"value": "progress"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "apikey",
+		"apikey": [
+			{
+				"key": "key",
+				"value": "Task-Auth",
+				"type": "string"
+			},
+			{
+				"key": "value",
+				"value": "totally_secret",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"pm.globals.set(\"URL\", \"http://localhost:8080/api/tasks/\");"
+				]
+			}
+		}
+	]
+}

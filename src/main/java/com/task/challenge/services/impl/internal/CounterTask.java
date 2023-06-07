@@ -26,8 +26,8 @@ public class CounterTask implements Runnable {
     private void scheduleUpdate(final int current, final int target) {
         executorService.schedule(() -> {
             if (current < target && !Thread.currentThread().isInterrupted()) {
-                task.setProgress(task.getProgress().intValue() + 1);
-                scheduleUpdate(task.getProgress().intValue(), target);
+                task.setProgress(task.getProgress() + 1);
+                scheduleUpdate(task.getProgress(), target);
             } else {
                 task.setProgress(target);
                 executorService.shutdown();

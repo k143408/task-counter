@@ -11,14 +11,14 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
-    <groupId>com.Task</groupId>
-    <version>1.1-SNAPSHOT</version>
+    <groupId>com.task</groupId>
+    <version>1.1</version>
     <artifactId>challenge-java</artifactId>
 
     <packaging>jar</packaging>
 
     <properties>
-        <java.version>11</java.version>
+        <java.version>17</java.version>
         <spring-boot.version>2.2.5.RELEASE</spring-boot.version>
         <commons-io.version>2.6</commons-io.version>
         <maven.compiler.source>11</maven.compiler.source>
@@ -44,6 +44,11 @@
             <artifactId>h2</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.6.0</version>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
@@ -51,11 +56,21 @@
     </dependencies>
 
     <build>
+        <finalName>app</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>14</source>
+                    <target>14</target>
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
 </project>
